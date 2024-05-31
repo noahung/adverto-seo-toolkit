@@ -31,10 +31,6 @@ Adverto SEO Tool Kit is a WordPress plugin that provides a suite of SEO tools in
 5. Enter the replacement text for each duplicate.
 6. Click "Duplicate and Replace" to duplicate the page with the specified replacements.
 
-## Customization
-
-- **Custom Icon:** You can replace the default icon (`adverto-logo.png`) in the plugin directory with your preferred custom icon.
-
 ## License
 
 This plugin is licensed under the GPLv2 or later.
