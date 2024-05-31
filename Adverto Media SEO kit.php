@@ -47,9 +47,9 @@ function canonical_url_tool_page() {
                         <span class="checkmark"></span>
                     </label>
                     <?php
-                    // Break into new column after every 3rd page
+                    // Break into new column after every 2nd page
                     $column_count++;
-                    if ($column_count % 3 == 0) {
+                    if ($column_count % 2 == 0) {
                         echo '<br>';
                     }
                 }
@@ -64,7 +64,7 @@ function canonical_url_tool_page() {
     <style>
     /* Custom checkbox styles */
     .page-columns {
-        column-count: 3;
+        column-count: 2;
     }
 
     .checkbox-container {
