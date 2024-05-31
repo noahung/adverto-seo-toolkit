@@ -42,16 +42,12 @@ function canonical_url_tool_page() {
                 $column_count = 0;
                 foreach ($pages as $page) {
                     ?>
-                    <label class="checkbox-container"><?php echo $page->post_title; ?>
+                    <label class="checkbox-container <?php echo ($column_count % 2 == 0) ? 'first-column' : ''; ?>"><?php echo $page->post_title; ?>
                         <input type="checkbox" name="selected_pages[]" value="<?php echo $page->ID; ?>">
                         <span class="checkmark"></span>
                     </label>
                     <?php
-                    // Break into new column after every 2nd page
                     $column_count++;
-                    if ($column_count % 2 == 0) {
-                        echo '<br>';
-                    }
                 }
                 ?>
             </div>
@@ -64,14 +60,14 @@ function canonical_url_tool_page() {
     <style>
     /* Custom checkbox styles */
     .page-columns {
-        column-count: 2;
+        display: flex;
+        flex-wrap: wrap;
     }
 
     .checkbox-container {
         display: block;
         position: relative;
         padding-left: 35px;
-        margin-bottom: 12px;
         cursor: pointer;
         font-size: 16px;
         user-select: none;
@@ -121,12 +117,23 @@ function canonical_url_tool_page() {
         border-width: 0 3px 3px 0;
         transform: rotate(45deg);
     }
+
+    /* Remove margin-bottom from every third checkbox container */
+    .checkbox-container:nth-child(2n + 1) {
+        margin-bottom: 12px;
+    }
+
+    /* Add margin-bottom to the first checkbox container in each column */
+    .first-column {
+        margin-bottom: 12px;
+    }
     </style>
     <?php
     if (isset($_POST['submit'])) {
         canonical_url_tool_update_urls();
     }
 }
+
 
 
 function canonical_url_tool_update_urls() {
