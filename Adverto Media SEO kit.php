@@ -30,23 +30,31 @@ function canonical_url_tool_page() {
         <h1>Canonical URL Tool for Yoast</h1>
         <form method="post" action="">
             <h2>Select Pages</h2>
-            <?php
-            $args = array(
-                'post_type' => 'page',
-                'posts_per_page' => -1,
-                'orderby' => 'title',
-                'order' => 'ASC', // Sort pages in ascending order by title
-            );
-            $pages = get_pages($args);
-            foreach ($pages as $page) {
-                ?>
-                <label class="checkbox-container"><?php echo $page->post_title; ?>
-                    <input type="checkbox" name="selected_pages[]" value="<?php echo $page->ID; ?>">
-                    <span class="checkmark"></span>
-                </label>
+            <div class="page-columns">
                 <?php
-            }
-            ?>
+                $args = array(
+                    'post_type' => 'page',
+                    'posts_per_page' => -1,
+                    'orderby' => 'title',
+                    'order' => 'ASC', // Sort pages in ascending order by title
+                );
+                $pages = get_pages($args);
+                $column_count = 0;
+                foreach ($pages as $page) {
+                    ?>
+                    <label class="checkbox-container"><?php echo $page->post_title; ?>
+                        <input type="checkbox" name="selected_pages[]" value="<?php echo $page->ID; ?>">
+                        <span class="checkmark"></span>
+                    </label>
+                    <?php
+                    // Break into new column after every 3rd page
+                    $column_count++;
+                    if ($column_count % 3 == 0) {
+                        echo '<br>';
+                    }
+                }
+                ?>
+            </div>
             <h2>Canonical URL</h2>
             <input type="text" name="canonical_url" value="">
             <br><br>
@@ -55,6 +63,10 @@ function canonical_url_tool_page() {
     </div>
     <style>
     /* Custom checkbox styles */
+    .page-columns {
+        column-count: 3;
+    }
+
     .checkbox-container {
         display: block;
         position: relative;
