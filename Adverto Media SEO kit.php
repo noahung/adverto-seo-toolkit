@@ -11,7 +11,7 @@ add_action('admin_menu', 'adverto_seo_tool_kit_menu');
 function adverto_seo_tool_kit_menu() {
     // Add main menu with custom icon
     $icon_url = plugin_dir_url(__FILE__) . 'adverto-logo.png';
-    add_menu_page('Adverto SEO Tool Kit', 'Adverto SEO Tool Kit', 'manage_options', 'adverto-seo-tool-kit', 'canonical_url_tool_page', $icon_url, 20);
+    add_menu_page('Adverto SEO Tool Kit', 'Adverto SEO Tool Kit', 'manage_options', 'adverto-seo-tool-kit', '', $icon_url, 20);
     
     // Add submenus
     add_submenu_page('adverto-seo-tool-kit', 'Canonical URL Tool', 'Canonical URL Tool', 'manage_options', 'canonical-url-tool', 'canonical_url_tool_page');
@@ -161,16 +161,4 @@ function dpr_duplicate_pages($page_id, $find, $replacements) {
 
         // Update Yoast SEO fields in duplicated page
         $new_focus_keyphrase = str_replace($find, $replace, $focus_keyphrase);
-        $new_seo_title = str_replace($find, $replace, $seo_title);
-        $new_meta_description = str_replace($find, $replace, $meta_description);
-
-        update_post_meta($new_page_id, '_yoast_wpseo_focuskw', $new_focus_keyphrase);
-        update_post_meta($new_page_id, '_yoast_wpseo_title', $new_seo_title);
-        update_post_meta($new_page_id, '_yoast_wpseo_metadesc', $new_meta_description);
-
-        // Update Pixfort options in duplicated page
-        update_post_meta($new_page_id, 'pix-hide-top-padding', $pix_hide_top_padding);
-        update_post_meta($new_page_id, 'pix-hide-top-area', $pix_hide_top_area);
-    }
-}
-?>
+  
