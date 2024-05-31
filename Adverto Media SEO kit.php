@@ -9,12 +9,15 @@ Version: 1.0
 add_action('admin_menu', 'adverto_seo_tool_kit_menu');
 
 function adverto_seo_tool_kit_menu() {
-    // Add main menu with custom icon
-    $icon_url = plugin_dir_url(__FILE__) . 'adverto-logo.png';
-    
-    // Add submenus
+    add_menu_page('Adverto SEO Tool Kit', 'Adverto SEO Tool Kit', 'manage_options', 'adverto-seo-tool-kit', 'adverto_seo_tool_kit_page', 'dashicons-admin-tools', 20);
+
     add_submenu_page('adverto-seo-tool-kit', 'Canonical URL Tool', 'Canonical URL Tool', 'manage_options', 'canonical-url-tool', 'canonical_url_tool_page');
     add_submenu_page('adverto-seo-tool-kit', 'Duplicate SEO Wizard', 'Duplicate SEO Wizard', 'manage_options', 'duplicate-seo-wizard', 'duplicate_seo_wizard_page');
+}
+
+function adverto_seo_tool_kit_page() {
+    echo '<h1>Adverto SEO Tool Kit</h1>';
+    echo '<p>Welcome to the Adverto SEO Tool Kit. Please choose a tool from the menu.</p>';
 }
 
 // Canonical URL Tool
