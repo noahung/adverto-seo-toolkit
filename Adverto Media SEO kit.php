@@ -31,8 +31,13 @@ function canonical_url_tool_page() {
         <form method="post" action="">
             <h2>Select Pages</h2>
             <?php
-            $args = array('post_type' => 'page', 'posts_per_page' => -1);
-            $pages = get_posts($args);
+            $args = array(
+                'post_type' => 'page',
+                'posts_per_page' => -1,
+                'orderby' => 'title',
+                'order' => 'ASC', // Sort pages in ascending order by title
+            );
+            $pages = get_pages($args);
             foreach ($pages as $page) {
                 echo '<input type="checkbox" name="selected_pages[]" value="' . $page->ID . '"> ' . $page->post_title . '<br>';
             }
