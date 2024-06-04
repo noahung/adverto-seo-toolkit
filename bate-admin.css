@@ -1,0 +1,27 @@
+/* CSS code */
+#bate-table {
+    width: 100%;
+    margin-top: 20px;
+}
+#bate-table .column-image {
+    width: 150px;
+}
+#bate-table .column-alt-text {
+    width: 100%;
+}
+#bate-table img {
+    width: 100px;
+    height: auto;
+}
+#bate-pagination .page-link {
+    cursor: pointer;
+    padding: 5px 10px;
+    margin: 0 5px;
+    background: #0073aa;
+    color: #fff;
+    border-radius: 3px;
+    text-decoration: none;
+}
+#bate-pagination .page-link:hover {
+    background: #005177;
+}
