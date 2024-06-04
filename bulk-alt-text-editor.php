@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 
 // Enqueue admin scripts and styles
 function bate_enqueue_admin_scripts($hook) {
-    if ($hook != 'toplevel_page_bulk-alt-text-editor') {
+    if ($hook != 'toplevel_page_bulk-alt-text-editor' && $hook != 'adverto-seo-tool-kit_page_bulk-alt-text-editor') {
         return;
     }
     wp_enqueue_style('bate-admin-css', plugin_dir_url(__FILE__) . 'bate-admin.css');
@@ -26,14 +26,13 @@ add_action('admin_enqueue_scripts', 'bate_enqueue_admin_scripts');
 
 // Add menu item for the plugin
 function bate_add_admin_menu() {
-    add_menu_page(
-        'Bulk Alt Text Editor',   // Page title
-        'Bulk Alt Text Editor',   // Menu title
-        'manage_options',         // Capability
-        'bulk-alt-text-editor',   // Menu slug
-        'bate_admin_page',        // Callback function
-        'dashicons-edit',         // Icon URL
-        6                         // Position
+    add_submenu_page(
+        'adverto-seo-tool-kit',          // Parent menu slug
+        'Bulk Alt Text Editor',          // Page title
+        'Bulk Alt Text Editor',          // Menu title
+        'manage_options',                // Capability
+        'bulk-alt-text-editor',          // Menu slug
+        'bate_admin_page'                // Callback function
     );
 }
 add_action('admin_menu', 'bate_add_admin_menu');
