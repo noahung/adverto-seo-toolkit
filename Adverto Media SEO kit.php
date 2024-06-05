@@ -3,7 +3,7 @@
 Plugin Name: Adverto SEO Tool Kit
 Description: A suite of SEO tools including Canonical URL Tool and Duplicate SEO Wizard.
 Author: Noah
-Version: 1.0
+Version: 1.1
 */
 
 add_action('admin_menu', 'adverto_seo_tool_kit_menu');
@@ -151,6 +151,10 @@ function dpr_duplicate_pages($page_id, $find, $replacements) {
     // Retrieve page attributes
     $parent_id = wp_get_post_parent_id($page_id);
 
+    // Duplicate images and update alt text
+    $image_ids = array();
+    $images = get_attached_media('image', $page_id);
+
     foreach ($replacements as $replace) {
         $new_page = array(
             'post_title' => str_replace($find, $replace, $page->post_title),
@@ -165,22 +169,75 @@ function dpr_duplicate_pages($page_id, $find, $replacements) {
 
         if ($new_page_id) {
             echo '<div class="updated"><p>Page duplicated successfully with replacement: ' . esc_html($replace) . '</p></div>';
+
+            // Update Yoast SEO fields in duplicated page
+            $new_focus_keyphrase = str_replace($find, $replace, $focus_keyphrase);
+            $new_seo_title = str_replace($find, $replace, $seo_title);
+            $new_meta_description = str_replace($find, $replace, $meta_description);
+
+            update_post_meta($new_page_id, '_yoast_wpseo_focuskw', $new_focus_keyphrase);
+            update_post_meta($new_page_id, '_yoast_wpseo_title', $new_seo_title);
+            update_post_meta($new_page_id, '_yoast_wpseo_metadesc', $new_meta_description);
+
+            // Set Pixfort options to value 1
+            update_post_meta($new_page_id, 'pix-hide-top-padding', '1');
+            update_post_meta($new_page_id, 'pix-hide-top-area', '1');
+
+            // Duplicate images
+            foreach ($images as $image) {
+                $image_id = $image->ID;
+                $new_image_id = duplicate_image($image_id, $new_page_id, str_replace($find, $replace, $page->post_title));
+                if ($new_image_id) {
+                    $image_ids[] = $new_image_id;
+                }
+            }
+
+            // Update post content with new image IDs
+            $new_content = $new_page['post_content'];
+            foreach ($images as $index => $image) {
+                $new_content = str_replace('wp-image-' . $image->ID, 'wp-image-' . $image_ids[$index], $new_content);
+            }
+
+            wp_update_post(array(
+                'ID' => $new_page_id,
+                'post_content' => $new_content
+            ));
         } else {
             echo '<div class="error"><p>Failed to duplicate page with replacement: ' . esc_html($replace) . '</p></div>';
         }
-
-        // Update Yoast SEO fields in duplicated page
-        $new_focus_keyphrase = str_replace($find, $replace, $focus_keyphrase);
-        $new_seo_title = str_replace($find, $replace, $seo_title);
-        $new_meta_description = str_replace($find, $replace, $meta_description);
-
-        update_post_meta($new_page_id, '_yoast_wpseo_focuskw', $new_focus_keyphrase);
-        update_post_meta($new_page_id, '_yoast_wpseo_title', $new_seo_title);
-        update_post_meta($new_page_id, '_yoast_wpseo_metadesc', $new_meta_description);
-
-        // Update Pixfort options in duplicated page
-        update_post_meta($new_page_id, 'pix-hide-top-padding', $pix_hide_top_padding);
-        update_post_meta($new_page_id, 'pix-hide-top-area', $pix_hide_top_area);
     }
+}
+
+function duplicate_image($image_id, $new_page_id, $new_page_title) {
+    $image = get_post($image_id);
+    $image_data = get_attached_file($image_id);
+    $uploads = wp_upload_dir();
+    $new_image_path = $uploads['path'] . '/' . wp_basename($image_data);
+    if (!copy($image_data, $new_image_path)) {
+        return false;
+    }
+
+    $new_image_url = $uploads['url'] . '/' . wp_basename($image_data);
+    $new_image = array(
+        'guid' => $new_image_url,
+        'post_mime_type' => $image->post_mime_type,
+        'post_title' => $image->post_title,
+        'post_content' => $image->post_content,
+        'post_status' => 'inherit',
+        'post_parent' => $new_page_id,
+    );
+
+    $new_image_id = wp_insert_attachment($new_image, $new_image_path, $new_page_id);
+    if (is_wp_error($new_image_id)) {
+        return false;
+    }
+
+    require_once(ABSPATH . 'wp-admin/includes/image.php');
+    $attach_data = wp_generate_attachment_metadata($new_image_id, $new_image_path);
+    wp_update_attachment_metadata($new_image_id, $attach_data);
+
+    update_post_meta($new_image_id, '_wp_attachment_image_alt', $new_page_title);
+
+    return $new_image_id;
 }
 ?>
